@@ -108,6 +108,12 @@ export class Matrix {
     let k = 0;
 
     for (let i = 0; i < size; i++) {
+      if (matrix[i].some((i)=>(i !== 0))) {
+        rang = 1;
+      }
+    }
+
+    for (let i = 0; i < size; i++) {
       for (let j = 0; j < size; j++) {
         //если элемент не нулевой,
         if (matrix[i][j]) {
