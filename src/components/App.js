@@ -1,22 +1,59 @@
-import React, { useState, useEffect } from 'react'
-import { Matrix } from '../utils/Matrix';
-import Latex from 'react-latex';
+import React, { useState, useEffect} from 'react'
+import { Matrix } from './Matrix';
+import { defaultMatrix } from '../utils/constants';
+import Interface from './Interface';
 
 function App() {
 
   const [input, setInput] = useState('');
-  const [matrix, setMatrix] = useState(new Matrix(input));
+  const [matrix, setMatrix] = useState(new Matrix(defaultMatrix));
+  const [type, setType] = useState('1');
+  const [result, setResult] = useState(`$$\\textrm{Click one of the buttons to see the result}$$`);
 
-  function handleChange(e) {
-    setInput(e.target.value);
-  }
-
-  // при вводе обновляет значение matrix
   useEffect(() => {
     setMatrix(new Matrix(input));
   }, [input])
 
-  // генерирует LaTex - строку для отображения матрицы
+  function handleInputChange(e) {
+    setInput(e.target.value);
+  }
+
+  function handleSetType(e) {
+    setType(e.target.value);
+  }
+
+  function updateMatrix() {
+    setMatrix(new Matrix(input));
+  }
+
+  function getCurrentMatrix() {
+    updateMatrix();
+    if (type === '1') {
+      setResult(`$$\\textrm{Your matrix:}${renderLatexMatrix(matrix.matrix)}$$`);
+    }
+  }
+
+  function getTransposedMatrix() {
+    updateMatrix();
+    if (type === '1') {
+      setResult(`$$\\textrm{Transposed matrix:}${renderLatexMatrix(matrix.transposedMatrix)}$$`);
+    }
+  }
+
+  function getDeterminant() {
+    updateMatrix();
+    if (type === '1') {
+      setResult(`$$\\textrm{Determinant: }${matrix.determinant}$$`);
+    }
+  }
+
+  function getRank() {
+    updateMatrix();
+    if (type === '1') {
+      setResult(`$$\\textrm{Rank: }${matrix.rank}$$`);
+    }
+  }
+
   const renderLatexMatrix = (matrix) => {
     return (
       "\\begin{pmatrix}\n" +
@@ -32,43 +69,18 @@ function App() {
 
   return (
     <div className="page">
-      <header className="header">
-        <Latex>{`$$\\hearts$$`}</Latex>
-        <Latex >{`$$\\textbf{Application for given calculations over a square matrix.}$$`}</Latex>
-        <a
-          className="link"
-          href="https://github.com/polexka/matrix"
-          target="_blank" rel="noreferrer"
-        >
-          <Latex >{`$$\\utilde\\text{Github repository}$$`}</Latex>
-        </a>
-      </header>
-      <main>
-        <div className='input-panel'>
-          <textarea
-            className='textarea'
-            placeholder="Enter the values of the matrix elements."
-            cols={60}
-            value={input}
-            onChange={handleChange} />
-        </div>
-        <div className='results'>
-          <div className='matrixs'>
-            <div className='matrix'>
-              <Latex>{`$$\\textrm{Your matrix:}$$`}</Latex>
-              <Latex>{`$$${renderLatexMatrix(matrix.matrix)}$$`}</Latex>
-            </div>
-            <div className='matrix'>
-              <Latex>{`$$\\textrm{Transposed matrix:}$$`}</Latex>
-              <Latex>{`$$${renderLatexMatrix(matrix.transposedMatrix)}$$`}</Latex>
-            </div>
-          </div>
-          <div className='res'>
-            <Latex>{`$$\\textrm{Determinant: }${matrix.determinant}$$`}</Latex>
-            <Latex>{`$$\\textrm{Rank: }${matrix.rank}$$`}</Latex>
-          </div>
-        </div>
-      </main>
+        <Interface
+          input={input}
+          handleInputChange={handleInputChange}
+          type={type}
+          handleChangeType={handleSetType}
+          
+          getCurrentMatrix={getCurrentMatrix}
+          getTransposedMatrix={getTransposedMatrix}
+          getDeterminant={getDeterminant}
+          getRank={getRank}
+          
+          result={result} />
     </div>
   );
 }
